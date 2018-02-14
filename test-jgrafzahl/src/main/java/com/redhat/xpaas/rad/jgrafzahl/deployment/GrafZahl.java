@@ -3,13 +3,10 @@ package com.redhat.xpaas.rad.jgrafzahl.deployment;
 import com.redhat.xpaas.RadConfiguration;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.jgrafzahl.api.JgrafZahlWebUI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.redhat.xpaas.oshinko.deployment.Oshinko.deployPySparkSpark;
 
 public class GrafZahl {
-  private static final Logger log = LoggerFactory.getLogger(JgrafZahl.class);
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   private static final String NAMESPACE = RadConfiguration.masterNamespace();
   private static final String ROUTE = "/grafzahl/route.yaml";

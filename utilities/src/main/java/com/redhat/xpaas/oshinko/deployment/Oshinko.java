@@ -5,16 +5,10 @@ import com.redhat.xpaas.oshinko.api.OshinkoWebUI;
 import com.redhat.xpaas.RadConfiguration;
 import com.redhat.xpaas.wait.WaitUtil;
 import io.fabric8.kubernetes.api.model.*;
-import io.fabric8.openshift.api.model.RouteBuilder;
-import io.fabric8.openshift.api.model.RoutePort;
 import io.fabric8.openshift.api.model.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -65,6 +59,23 @@ public class Oshinko {
 
     log.info("action=deploying-oshinko status=FINISH");
     return OshinkoWebUI.getInstance(openshift.appDefaultHostNameBuilder("oshinko-web"));
+  }
+
+  public static void deploySparkFromResource(){
+    String sparkResource = "/oshinko/spark-metrics-template.yaml";
+
+    Template template = openshift.withAdminUser(client ->
+      client.templates().inNamespace(NAMESPACE).load(Oshinko.class.getResourceAsStream(sparkResource)).createOrReplace()
+    );
+
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("MASTER_NAME", "spark-m");
+    parameters.put("WORKER_NAME", "spark-w");
+
+    openshift.loadTemplate(template, parameters);
+
+    WaitUtil.waitForPodsToReachRunningState("name", "spark-m", 1);
+    WaitUtil.waitForPodsToReachRunningState("name", "spark-w", 2);
   }
 
   public static void buildRoute(){

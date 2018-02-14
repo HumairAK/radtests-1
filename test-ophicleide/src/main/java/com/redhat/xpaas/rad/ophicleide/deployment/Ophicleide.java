@@ -4,23 +4,17 @@ import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.ophicleide.api.OphicleideWebUI;
 import com.redhat.xpaas.RadConfiguration;
 import com.redhat.xpaas.wait.WaitUtil;
-import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.openshift.api.model.BuildRequestBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import io.fabric8.openshift.api.model.Template;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
 
 public class Ophicleide {
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   private static final String APP_NAME = RadConfiguration.ophicleideAppName();
-  private static final int WORKERS_COUNT = RadConfiguration.oshinkoInitialWorkerCount();
-  private static final String CLUSTER_NAME = RadConfiguration.clusterName();
   private static final Long TIMEOUT = RadConfiguration.timeout();
-  private static final String MONGODB_APP_NAME = RadConfiguration.mongodbAppName();
   private static final String NAMESPACE = RadConfiguration.masterNamespace();
 
   public static OphicleideWebUI deployOphicleideWebUI() {
@@ -28,15 +22,6 @@ public class Ophicleide {
     startBuilds();
     launchApplication();
     return OphicleideWebUI.getInstance(openshift.appDefaultHostNameBuilder("ophicleide-web"));
-  }
-
-  // Ensure Mongodb/sparkclusters pods are ready
-  private static void waitForSetup(){
-    String masterName = CLUSTER_NAME + "-m";
-    String workerName = CLUSTER_NAME + "-w";
-    WaitUtil.waitForPodsToReachRunningState("deploymentconfig", masterName, 1);
-    WaitUtil.waitForPodsToReachRunningState("deploymentconfig", workerName, WORKERS_COUNT);
-    WaitUtil.waitForPodsToReachRunningState("name", MONGODB_APP_NAME, 1);
   }
 
   private static void initializeOphicleideResources(){
@@ -98,13 +83,17 @@ public class Ophicleide {
   }
 
   private static void launchApplication() {
-    String template = "/ophicleide/template.yaml";
-    waitForSetup();
-    openshift.withAdminUser(client ->
-      client.inNamespace(NAMESPACE).load(Ophicleide.class.getResourceAsStream(template))
-        .deletingExisting()
-        .createOrReplace()
+    String ophResource = "/ophicleide/template.yaml";
+    Template template = openshift.withAdminUser(client ->
+      client.templates().inNamespace(NAMESPACE).load(Ophicleide.class.getResourceAsStream(ophResource)).createOrReplace()
     );
+
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("SPARK", RadConfiguration.sparkMasterURL());
+    parameters.put("MONGO", RadConfiguration.mongodbURL());
+
+    openshift.loadTemplate(template, parameters);
+
     WaitUtil.waitForPodsToReachRunningState("name", APP_NAME, 1);
   }
 

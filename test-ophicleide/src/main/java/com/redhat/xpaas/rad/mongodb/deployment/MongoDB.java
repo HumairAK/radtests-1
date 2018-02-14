@@ -4,12 +4,8 @@ import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.RadConfiguration;
 import com.redhat.xpaas.wait.WaitUtil;
 import io.fabric8.openshift.api.model.Template;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
 
 public class MongoDB {
   private static final String NAMESPACE = RadConfiguration.masterNamespace();
@@ -17,17 +13,20 @@ public class MongoDB {
   private static final String APP_NAME = RadConfiguration.mongodbAppName();
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   public static void deployMongoDBPod(){
-    Template[] mongoDB = new Template[1];
-    loadMongoResources();
+    Template template = openshift.withAdminUser(client ->
+      client.templates().inNamespace(NAMESPACE).load(MongoDB.class.getResourceAsStream(MONGODB_TEMPLATE)).createOrReplace()
+    );
+
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("DATABASE_SERVICE_NAME", RadConfiguration.mongodbServiceName());
+    parameters.put("MONGODB_DATABASE", RadConfiguration.mongodbDatabase());
+    parameters.put("MONGODB_USER", RadConfiguration.mongodbUserName());
+    parameters.put("MONGODB_PASSWORD", RadConfiguration.mongodbPassword());
+    parameters.put("MONGODB_ADMIN_PASSWORD",RadConfiguration.mongodbPassword());
+
+    openshift.loadTemplate(template, parameters);
+
     WaitUtil.waitForPodsToReachRunningState("name", APP_NAME, 1);
   }
-
-  public static void loadMongoResources(){
-    openshift.withAdminUser(client ->
-      client.inNamespace(NAMESPACE).load(MongoDB.class.getResourceAsStream(MONGODB_TEMPLATE)).createOrReplace()
-    );
-  }
-
-
 
 }

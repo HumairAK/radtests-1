@@ -23,7 +23,6 @@ public class WebUITest {
   public static void setUP() {
     Setup setup = new Setup();
     WebUITest.CephSource = setup.initializeApplications();
-    //WebUITest.CephSource = CephSourceWebUI.getInstance(openshift.appDefaultHostNameBuilder("workshop-notebook"));
     CephSource.login("developer");
     CephSource.loadProjectByURL("ceph-example.ipynb");
   }

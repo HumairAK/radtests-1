@@ -4,9 +4,6 @@ import com.redhat.xpaas.RadConfiguration;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.wait.WaitUtil;
 import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.openshift.api.model.Template;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeoutException;
 import java.util.function.BooleanSupplier;
@@ -37,7 +34,7 @@ public class ApacheKafka {
     return () -> openshift.getPods().stream().filter(podFilter).count() == n;
   }
 
-  public static boolean isKafkaPodReady(Pod pod) {
+  private static boolean isKafkaPodReady(Pod pod) {
     return "Running".equals(pod.getStatus().getPhase()) && !pod.getMetadata().getName().contains("deploy");
   }
 }

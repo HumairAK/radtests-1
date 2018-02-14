@@ -1,29 +1,27 @@
 package com.redhat.xpaas;
 
+import com.redhat.xpaas.logger.LogWrapper;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.ValueAtRisk.api.ValueAtRiskWebUI;
 import org.assertj.core.api.Assertions;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.FixMethodOrder;
+import org.junit.*;
+import org.junit.rules.TestRule;
 import org.junit.runners.MethodSorters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
 
+  private LogWrapper log = new LogWrapper(Setup.class, "valueatrisk");
   private static ValueAtRiskWebUI ValueAtRisk;
-  private Logger log = LoggerFactory.getLogger(WebUITest.class);;
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
+
+  @Rule
+  public TestRule watcher = log.getLogTestWatcher();
 
   @BeforeClass
   public static void setUp() {
     Setup setup = new Setup();
     WebUITest.ValueAtRisk = setup.initializeApplications();
-    //WebUITest.ValueAtRisk = ValueAtRiskWebUI.getInstance(openshift.appDefaultHostNameBuilder("workshop-notebook"));
     ValueAtRisk.login("developer");
     ValueAtRisk.loadProjectByURL("var.ipynb");
   }

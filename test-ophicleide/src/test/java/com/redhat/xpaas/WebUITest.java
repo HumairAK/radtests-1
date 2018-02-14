@@ -1,19 +1,18 @@
 package com.redhat.xpaas;
 
 import com.redhat.xpaas.logger.LogWrapper;
+import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.ophicleide.api.OphicleideWebUI;
 import com.redhat.xpaas.rad.ophicleide.api.entity.QueryResults;
 import org.assertj.core.api.Assertions;
 import org.junit.*;
 import org.junit.rules.TestRule;
 import org.junit.runners.MethodSorters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
 
-  LogWrapper log = new LogWrapper(Setup.class, "ophicleide");
+  private LogWrapper log = new LogWrapper(Setup.class, "ophicleide");
   private static OphicleideWebUI ophicleide;
   private static final String modelName = RadConfiguration.modelName();
   private static final String modelUrls = RadConfiguration.modelURL();

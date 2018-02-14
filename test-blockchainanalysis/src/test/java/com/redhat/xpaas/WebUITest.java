@@ -1,32 +1,21 @@
 package com.redhat.xpaas;
 
-import com.redhat.xpaas.jupyter.JupyterWebUI;
 import com.redhat.xpaas.logger.LogWrapper;
-import com.redhat.xpaas.logger.LoggerUtil;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.BlockChainAnalysis.api.BlockChainAnalysisSparkWebUI;
 import com.redhat.xpaas.rad.BlockChainAnalysis.api.BlockChainAnalysisWebUI;
-import com.redhat.xpaas.rad.BlockChainAnalysis.deployment.BlockChainAnalysisSpark;
 import com.redhat.xpaas.util.Tuple;
 import org.assertj.core.api.Assertions;
 import org.junit.*;
-import org.junit.rules.TestName;
 import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 import org.junit.runners.MethodSorters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static com.redhat.xpaas.rad.BlockChainAnalysis.deployment.BlockChainAnalysisSpark.deployBlockChainAnalysisSpark;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
 
   private static BlockChainAnalysisWebUI BlockChainAnalysis;
   private static BlockChainAnalysisSparkWebUI BlockChainAnalysisSpark;
-  LogWrapper log = new LogWrapper(Setup.class, "blockchain");
-  private LoggerUtil logUtil = new LoggerUtil("blockchain");
+  private LogWrapper log = new LogWrapper(Setup.class, "blockchain");
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
 
   @Rule
@@ -38,10 +27,6 @@ public class WebUITest {
     Tuple<BlockChainAnalysisWebUI, BlockChainAnalysisSparkWebUI> blockchainNoteBooks = setup.initializeApplications();
     BlockChainAnalysis = blockchainNoteBooks.getFirst();
     BlockChainAnalysisSpark = blockchainNoteBooks.getSecond();
-
-//    BlockChainAnalysisSpark = BlockChainAnalysisSparkWebUI.getInstance(openshift.appDefaultHostNameBuilder("bitcoin-spark-notebook"));
-//    BlockChainAnalysis = BlockChainAnalysisWebUI.getInstance(openshift.appDefaultHostNameBuilder("bitcoin-notebook"));
-
     BlockChainAnalysis.loadProjectByURL("blockchain.ipynb");
     BlockChainAnalysisSpark.loadProjectByURL("blockchain.snb.ipynb");
   }
@@ -49,7 +34,7 @@ public class WebUITest {
   @AfterClass
   public static void tearDown(){
     Setup setup = new Setup();
-    //setup.cleanUp();
+    setup.cleanUp();
   }
 
   @Test

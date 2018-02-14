@@ -14,7 +14,7 @@ import static com.redhat.xpaas.rad.jgrafzahl.deployment.JgrafZahl.deployJgrafZah
 import static com.redhat.xpaas.rad.jgrafzahl.deployment.GrafZahl.deployGrafZahl;
 
 public class Setup {
-  LogWrapper log = new LogWrapper(Setup.class, "grafzahl");
+  private LogWrapper log = new LogWrapper(Setup.class, "grafzahl");
   private String NAMESPACE = RadConfiguration.masterNamespace();
   private OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   private static JgrafZahlWebUI JgrafZahl;
@@ -24,17 +24,14 @@ public class Setup {
   // contains Grafzahl's web ui api.
   JgrafZahlWebUI[] initializeApplications() {
     log.action("creating-new-namespace", this::initializeProject);
-
     log.action("loading-oshinko-resources", () -> {
       Oshinko.createServiceAccount("edit");
       Oshinko.loadJavaSparkResources();
     });
-
     log.action("launching-apache-kafka", ApacheKafka::deployApacheKafka);
     log.action("launching-wordfountain", WordFountain::deployWordFountain);
     log.action("launching-jgrafzahl", () -> JgrafZahl = deployJgrafZahl());
     log.action("launching-grafzahl", () -> GrafZahl = deployGrafZahl());
-
     log.action("waiting-for-pods-to-ready", () -> {
       WaitUtil.waitForActiveBuildsToComplete();
       try {
@@ -60,11 +57,13 @@ public class Setup {
       log.action("shutting-down-grafzahl-webdrivers", () -> GrafZahl.webDriverCleanup());
     }
 
-    log.action("deleting-namespace", () -> openshift.deleteProject(NAMESPACE));
+    if(RadConfiguration.deleteNamespaceAfterTests()){
+      log.action("deleting-namespace", () -> openshift.deleteProject(NAMESPACE));
+    }
   }
 
   private void initializeProject(){
-    OpenshiftUtil.getInstance().createProject(NAMESPACE, true);
+    OpenshiftUtil.getInstance().createProject(NAMESPACE, RadConfiguration.recreateNamespace());
   }
 
 }

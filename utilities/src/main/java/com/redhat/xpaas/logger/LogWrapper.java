@@ -1,23 +1,18 @@
 package com.redhat.xpaas.logger;
 
-import com.redhat.xpaas.RadConfiguration;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.function.Supplier;
-
 public class LogWrapper {
   private final Logger log;
-  private final String PROJECTNAME;
   private final LoggerUtil logUtil;
 
   public LogWrapper(Class logClass, String projectName){
     log = LoggerFactory.getLogger(logClass);
-    PROJECTNAME = projectName;
-    logUtil = new LoggerUtil(PROJECTNAME);
+    logUtil = new LoggerUtil(projectName);
   }
 
   public void action(String message, Runnable func){

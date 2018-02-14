@@ -5,12 +5,8 @@ import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.AMQP.api.AMQPWebUI;
 import com.redhat.xpaas.wait.WaitUtil;
 import io.fabric8.kubernetes.api.model.ReplicationController;
-import io.fabric8.openshift.api.model.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AMQP {
   private static final Logger log = LoggerFactory.getLogger(AMQP.class);

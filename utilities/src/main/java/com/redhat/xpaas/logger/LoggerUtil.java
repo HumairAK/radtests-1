@@ -1,6 +1,5 @@
 package com.redhat.xpaas.logger;
 
-
 import com.redhat.xpaas.RadConfiguration;
 
 public class LoggerUtil {
