@@ -1,11 +1,13 @@
 package com.redhat.xpaas;
 
+import com.jcabi.aspects.Loggable;
 import com.redhat.xpaas.logger.LogWrapper;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.S3Source.api.S3SourceWebUI;
 
 import static com.redhat.xpaas.rad.S3Source.deployment.S3Source.deployS3Source;
 
+@Loggable(prepend = true)
 public class Setup {
   private LogWrapper log = new LogWrapper(Setup.class, "s3source");
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();

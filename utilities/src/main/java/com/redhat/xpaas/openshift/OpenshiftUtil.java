@@ -1,5 +1,6 @@
 package com.redhat.xpaas.openshift;
 
+import com.jcabi.aspects.Loggable;
 import com.redhat.xpaas.RadConfiguration;
 import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.client.KubernetesClientException;
