@@ -25,6 +25,14 @@ public class LogWrapper {
     return this.log;
   }
 
+  public void start(String message){
+    log.info(logUtil.start(message));
+  }
+
+  public void finish(String message, Long time){
+    log.info(logUtil.finish(message, time));
+  }
+
   public void error(String message){
     log.error(logUtil.error(message));
   }

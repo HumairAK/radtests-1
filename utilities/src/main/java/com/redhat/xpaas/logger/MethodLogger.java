@@ -7,32 +7,50 @@ import org.aspectj.lang.reflect.MethodSignature;
 import java.lang.reflect.Method;
 
 @Aspect
-public class MethodLogger {
+@SuppressWarnings
+  (
+    {
+      "PMD.AvoidCatchingThrowable",
+      "PMD.TooManyMethods",
+      "PMD.CyclomaticComplexity"
+    }
+  )
+public final class MethodLogger {
 
   @Around("execution(* *(..)) && @annotation(com.redhat.xpaas.logger.Loggable)")
-  public Object around(ProceedingJoinPoint point) {
+  public Object around(ProceedingJoinPoint point) throws Throwable {
     final Method method = MethodSignature.class.cast(point.getSignature()).getMethod();
     Loggable annotation = method.getAnnotation(Loggable.class);
+    return this.wrap(point, method, annotation);
+  }
 
-    LogWrapper log = new LogWrapper(method.getDeclaringClass(), annotation.project());
+  private Object wrap(final ProceedingJoinPoint point, final Method method, final Loggable annotation) throws Throwable {
 
-    long start = System.currentTimeMillis();
-
-    String message =  String.format("action=%s: method=%s", annotation.message(), method.getName());
-
-    log.info(message);
-
-    Object result = null;
-    try {
-      result = point.proceed();
-    } catch (Throwable throwable) {
-      throwable.printStackTrace();
+    if (Thread.interrupted()) {
+      throw new IllegalStateException(
+        String.format(
+          "thread '%s' in group '%s' interrupted",
+          Thread.currentThread().getName(),
+          Thread.currentThread().getThreadGroup().getName()
+        )
+      );
     }
 
-    message = String.format("action=%s: method=%s in %sms", annotation.message(), method.getName(),
-      System.currentTimeMillis() - start);
+    String projectName = annotation.project().isEmpty() ? "radtests" : annotation.project();
 
-    log.info(message);
+    LogWrapper log = new LogWrapper(method.getDeclaringClass(), projectName);
+    long start = System.currentTimeMillis();
+
+    // Log start
+    String message = annotation.message().isEmpty() ? method.getName() : annotation.message();
+
+    log.start(message);
+
+    Object result = null;
+    result = point.proceed();
+
+    log.finish(message, System.currentTimeMillis() - start);
+
     return result;
   }
 

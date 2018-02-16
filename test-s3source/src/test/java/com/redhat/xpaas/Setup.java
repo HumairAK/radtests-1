@@ -15,15 +15,7 @@ public class Setup {
 
   @Loggable(message="Starting initialization", project ="S3Source")
   S3SourceWebUI initializeApplications() {
-    System.out.println("init project");
-
-    try {
-      Thread.sleep(5000000L);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
     initializeProject();
-    System.out.println("deploy source");
     S3Source = deployS3Source();
     return S3Source;
   }
