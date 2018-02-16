@@ -4,18 +4,24 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.lang.reflect.Method;
 
 @Aspect
 public class MethodLogger {
 
-  private final Logger log = LoggerFactory.getLogger(MethodLogger.class);
-
-  @Around("execution(* *(..)) && @annotation(Loggable)")
+  @Around("execution(* *(..)) && @annotation(com.redhat.xpaas.logger.Loggable)")
   public Object around(ProceedingJoinPoint point) {
+    final Method method = MethodSignature.class.cast(point.getSignature()).getMethod();
+    Loggable annotation = method.getAnnotation(Loggable.class);
+
+    LogWrapper log = new LogWrapper(method.getDeclaringClass(), annotation.project());
+
     long start = System.currentTimeMillis();
+
+    String message =  String.format("action=%s: method=%s", annotation.message(), method.getName());
+
+    log.info(message);
+
     Object result = null;
     try {
       result = point.proceed();
@@ -23,13 +29,12 @@ public class MethodLogger {
       throwable.printStackTrace();
     }
 
-    Object[] args = point.getArgs();
-    String message = String.format("action=%s: %s in %sms",
-      MethodSignature.class.cast(point.getSignature()).getMethod().getName(),
-      result,
+    message = String.format("action=%s: method=%s in %sms", annotation.message(), method.getName(),
       System.currentTimeMillis() - start);
 
     log.info(message);
     return result;
   }
+
+
 }

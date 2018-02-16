@@ -18,6 +18,7 @@
         <brokerIP>10.8.63.248</brokerIP>
         <soakTestIterations>42</soakTestIterations>
 
+        <aspectj.version>1.8.13</aspectj.version>
         <fabric8.version>2.2.0.redhat-079</fabric8.version>
         <fuse.build.version>187</fuse.build.version>
         <fuse.bom.version>6.3.0.redhat-${fuse.build.version}</fuse.bom.version>
@@ -518,22 +519,15 @@
             </dependency>
 
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.16.10</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
-                <version>1.8.13</version>
+                <version>${aspectj.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjtools</artifactId>
-                <version>1.8.13</version>
+                <version>${aspectj.version}</version>
             </dependency>
 
         </dependencies>
@@ -549,6 +543,7 @@
                     <configuration>
                         <source>1.8</source>
                         <target>1.8</target>
+                        <useIncrementalCompilation>false</useIncrementalCompilation>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -566,6 +561,40 @@
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>2.17</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>aspectj-maven-plugin</artifactId>
+                    <version>1.11</version>
+                    <configuration>
+                        <complianceLevel>1.8</complianceLevel>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>process-sources</phase>
+                            <goals>
+                                <goal>compile</goal>       <!-- use this goal to weave all your main classes -->
+                                <goal>test-compile</goal>  <!-- use this goal to weave all your test classes -->
+                            </goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjtools</artifactId>
+                            <version>${aspectj.version}</version>
+                        </dependency>
+
+                        <dependency>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjweaver</artifactId>
+                            <version>${aspectj.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
             </plugins>
         </pluginManagement>
 

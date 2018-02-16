@@ -29,6 +29,10 @@ public class LogWrapper {
     log.error(logUtil.error(message));
   }
 
+  public void info(String message){
+    log.info(logUtil.error(message));
+  }
+
   public void logTestStart(Description description){
     log.info(logUtil.start("executing-test-" + description.getMethodName()));
   }

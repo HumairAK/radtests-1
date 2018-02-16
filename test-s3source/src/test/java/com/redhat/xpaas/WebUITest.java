@@ -1,6 +1,7 @@
 package com.redhat.xpaas;
 
 import com.redhat.xpaas.logger.LogWrapper;
+import com.redhat.xpaas.logger.Loggable;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.S3Source.api.S3SourceWebUI;
 import org.assertj.core.api.Assertions;
@@ -18,6 +19,7 @@ public class WebUITest {
   @Rule
   public TestRule watcher = log.getLogTestWatcher();
 
+  @Loggable(message="Starting setup", project ="S3Source")
   @BeforeClass
   public static void setUp() {
     Setup setup = new Setup();

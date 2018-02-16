@@ -1,6 +1,7 @@
 package com.redhat.xpaas;
 
 import com.redhat.xpaas.logger.LogWrapper;
+import com.redhat.xpaas.logger.Loggable;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.S3Source.api.S3SourceWebUI;
 
@@ -12,19 +13,28 @@ public class Setup {
   private String NAMESPACE = RadConfiguration.masterNamespace();
   private static S3SourceWebUI S3Source;
 
+  @Loggable(message="Starting initialization", project ="S3Source")
   S3SourceWebUI initializeApplications() {
-    log.action("creating-new-namespace", this::initializeProject);
-    log.action("deploy-s3source", () -> S3Source = deployS3Source());
+    System.out.println("init project");
+
+    try {
+      Thread.sleep(5000000L);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    initializeProject();
+    System.out.println("deploy source");
+    S3Source = deployS3Source();
     return S3Source;
   }
 
   void cleanUp() {
     if(S3Source != null){
-      log.action("shutting-down-webdrivers", () -> S3Source.webDriverCleanup());
+      S3Source.webDriverCleanup();
     }
 
     if(RadConfiguration.deleteNamespaceAfterTests()){
-      log.action("deleting-namespace", () -> openshift.deleteProject(NAMESPACE));
+      openshift.deleteProject(NAMESPACE);
     }
   }
 

@@ -30,7 +30,6 @@
 package com.redhat.xpaas.logger;
 
 import java.lang.annotation.*;
-import java.util.concurrent.TimeUnit;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -70,71 +69,6 @@ public @interface Loggable {
      */
     int value() default com.redhat.xpaas.logger.Loggable.INFO;
 
-    /**
-     * Maximum amount allowed for this method (a warning will be
-     * issued if it takes longer).
-     * @since 0.7.6
-     */
-    int limit() default 1;
-
-    /**
-     * Time unit for the limit.
-     * @since 0.7.14
-     */
-    TimeUnit unit() default TimeUnit.MINUTES;
-
-    /**
-     * Shall we trim long texts in order to make log lines more readable?
-     * @since 0.7.13
-     */
-    boolean trim() default true;
-
-    /**
-     * Method entry moment should be reported as well (by default only
-     * an exit moment is reported).
-     * @since 0.7.16
-     */
-    boolean prepend() default false;
-
-
-    Class<? extends Throwable>[] ignore() default { };
-
-    /**
-     * Skip logging of result, replacing it with dots?
-     * @since 0.7.19
-     */
-    boolean skipResult() default false;
-
-    /**
-     * Skip logging of arguments, replacing them all with dots?
-     * @since 0.7.19
-     */
-    boolean skipArgs() default false;
-
-    /**
-     * Add toString() result to log line.
-     * @since 0.8.1
-     */
-    boolean logThis() default false;
-
-    /**
-     * The precision (number of fractional digits) to be used when displaying
-     * the measured execution time.
-     * @since 0.18
-     */
-    int precision() default 2;
-
-    /**
-     * The name of the logger to be used. If not specified, defaults to the
-     * class name of the annotated class or method.
-     * @since 0.18
-     */
-    String name() default "";
-
-    @Documented
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    public @interface Quiet {
-    }
-
+    String project() default "";
+    String message() default "";
 }
