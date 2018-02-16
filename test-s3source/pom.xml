@@ -50,11 +50,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.jcabi</groupId>
-			<artifactId>jcabi-aspects</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 		</dependency>
@@ -75,38 +70,6 @@
 				<configuration>
 					<test>${test}</test>
 				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>com.jcabi</groupId>
-				<artifactId>jcabi-maven-plugin</artifactId>
-				<version>0.14.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-				<executions>
-					<execution>
-						<id>weave-classes</id>
-						<phase>process-classes</phase>
-						<configuration>
-							<classesDirectory>target/classes</classesDirectory>
-						</configuration>
-						<goals>
-							<goal>ajc</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>weave-test-classes</id>
-						<phase>process-test-classes</phase>
-						<configuration>
-							<classesDirectory>target/test-classes</classesDirectory>
-						</configuration>
-						<goals>
-							<goal>ajc</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 
 		</plugins>

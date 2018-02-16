@@ -173,11 +173,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.jcabi</groupId>
-            <artifactId>jcabi-aspects</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
         </dependency>
@@ -191,22 +186,26 @@
 
     <build>
         <plugins>
+
             <plugin>
-                <groupId>com.jcabi</groupId>
-                <artifactId>jcabi-maven-plugin</artifactId>
-                <version>0.14.1</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.11</version>
                 <configuration>
+                    <complianceLevel>1.8</complianceLevel>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>ajc</goal>
+                            <goal>compile</goal>       <!-- use this goal to weave all your main classes -->
+                            <goal>test-compile</goal>  <!-- use this goal to weave all your test classes -->
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 </project>

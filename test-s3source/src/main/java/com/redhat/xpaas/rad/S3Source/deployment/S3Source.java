@@ -1,6 +1,5 @@
 package com.redhat.xpaas.rad.S3Source.deployment;
 
-import com.jcabi.aspects.Loggable;
 import com.redhat.xpaas.RadConfiguration;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.S3Source.api.S3SourceWebUI;
@@ -10,7 +9,6 @@ import io.fabric8.openshift.api.model.Template;
 import java.util.HashMap;
 import java.util.Map;
 
-@Loggable(prepend = true)
 public class S3Source {
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   private static final String NAMESPACE = RadConfiguration.masterNamespace();

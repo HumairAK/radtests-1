@@ -1,6 +1,5 @@
 package com.redhat.xpaas;
 
-import com.jcabi.aspects.Loggable;
 import com.redhat.xpaas.logger.LogWrapper;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.S3Source.api.S3SourceWebUI;
@@ -9,7 +8,6 @@ import org.junit.*;
 import org.junit.rules.TestRule;
 import org.junit.runners.MethodSorters;
 
-@Loggable(prepend = true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
 
