@@ -18,10 +18,34 @@ import java.lang.reflect.Method;
 public final class MethodLogger {
 
   @Around("execution(* *(..)) && @annotation(com.redhat.xpaas.logger.Loggable)")
-  public Object around(ProceedingJoinPoint point) throws Throwable {
+  public Object wrapMethod(ProceedingJoinPoint point) throws Throwable {
     final Method method = MethodSignature.class.cast(point.getSignature()).getMethod();
     Loggable annotation = method.getAnnotation(Loggable.class);
     return this.wrap(point, method, annotation);
+  }
+
+  @Around
+    (
+      // @checkstyle StringLiteralsConcatenation (7 lines)
+      "execution(public * (@com.redhat.xpaas.logger.Loggable *).*(..))"
+        + " && !execution(String *.toString())"
+        + " && !execution(int *.hashCode())"
+        + " && !execution(boolean *.canEqual(Object))"
+        + " && !execution(boolean *.equals(Object))"
+    )
+  public Object wrapClass(final ProceedingJoinPoint point) throws Throwable {
+    final Method method = MethodSignature.class.cast(point.getSignature()).getMethod();
+    Object output;
+    if (method.isAnnotationPresent(Loggable.class)) {
+      output = point.proceed();
+    } else {
+      output = this.wrap(
+        point,
+        method,
+        method.getDeclaringClass().getAnnotation(Loggable.class)
+      );
+    }
+    return output;
   }
 
   private Object wrap(final ProceedingJoinPoint point, final Method method, final Loggable annotation) throws Throwable {
@@ -44,12 +68,16 @@ public final class MethodLogger {
     // Log start
     String message = annotation.message().isEmpty() ? method.getName() : annotation.message();
 
+    Object result;
     log.start(message);
-
-    Object result = null;
-    result = point.proceed();
-
-    log.finish(message, System.currentTimeMillis() - start);
+    try {
+      result = point.proceed();
+      log.finish(message, System.currentTimeMillis() - start);
+    } catch(Throwable throwable) {
+      String e = throwable.getMessage();
+      log.error(message, "\"" + e.substring(0, Math.min(e.length(), 100)) + "...\"");
+      throw throwable;
+    }
 
     return result;
   }

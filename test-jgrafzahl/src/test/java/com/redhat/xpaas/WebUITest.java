@@ -1,25 +1,22 @@
 package com.redhat.xpaas;
 
-import com.redhat.xpaas.logger.LogWrapper;
+import com.redhat.xpaas.logger.Loggable;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.jgrafzahl.api.JgrafZahlWebUI;
 import org.assertj.core.api.Assertions;
 import org.junit.*;
-import org.junit.rules.TestRule;
 import org.junit.runners.MethodSorters;
 
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Loggable(project ="grafzahl")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
-  private LogWrapper log = new LogWrapper(Setup.class, "grafzahl");
+
   private static JgrafZahlWebUI jgrafZahl;
   private static JgrafZahlWebUI grafZahl;
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
-
-  @Rule
-  public TestRule watcher = log.getLogTestWatcher();
 
   @BeforeClass
   public static void setUP() {
@@ -109,8 +106,6 @@ public class WebUITest {
     int newWordCount = oldWordCount + ThreadLocalRandom.current().nextInt(1, 6);
     Assertions.assertThat(grafZahl.changeNumberOfWords(newWordCount)).isTrue();
   }
-
-
 
 }
 

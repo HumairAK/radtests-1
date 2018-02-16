@@ -33,12 +33,12 @@ public class LogWrapper {
     log.info(logUtil.finish(message, time));
   }
 
-  public void error(String message){
-    log.error(logUtil.error(message));
+  public void error(String action, String errorMsg){
+    log.error(logUtil.error(action, errorMsg));
   }
 
   public void info(String message){
-    log.info(logUtil.error(message));
+    log.info(logUtil.start(message));
   }
 
   public void logTestStart(Description description){

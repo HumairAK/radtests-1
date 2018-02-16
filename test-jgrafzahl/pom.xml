@@ -60,6 +60,19 @@
 					<test>${test}</test>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<configuration>
+					<aspectLibraries>
+						<aspectLibrary>
+							<groupId>com.redhat.xpaas</groupId>
+							<artifactId>utilities</artifactId>
+						</aspectLibrary>
+					</aspectLibraries>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

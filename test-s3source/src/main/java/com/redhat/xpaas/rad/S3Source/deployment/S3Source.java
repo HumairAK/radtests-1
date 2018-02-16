@@ -1,7 +1,6 @@
 package com.redhat.xpaas.rad.S3Source.deployment;
 
 import com.redhat.xpaas.RadConfiguration;
-import com.redhat.xpaas.logger.Loggable;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.S3Source.api.S3SourceWebUI;
 import com.redhat.xpaas.wait.WaitUtil;
@@ -14,7 +13,6 @@ public class S3Source {
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   private static final String NAMESPACE = RadConfiguration.masterNamespace();
 
-  @Loggable(message="deploy", project ="S3Source")
   public static S3SourceWebUI deployS3Source() {
     String S3SourceTemplate = "/s3source/template.yaml";
 

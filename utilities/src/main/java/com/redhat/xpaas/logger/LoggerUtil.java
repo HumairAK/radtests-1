@@ -50,8 +50,17 @@ public class LoggerUtil {
     return String.valueOf(sb);
   }
 
+
   public String error(String message){
     StringBuilder sb = preMessageBuild(message).append("status=ERROR");
+    return String.valueOf(sb);
+  }
+
+  public String error(String action, String errorMsg){
+    StringBuilder sb = preMessageBuild(action)
+      .append("status=ERROR").append(" ")
+      .append("errorMsg=")
+      .append(errorMsg);
     return String.valueOf(sb);
   }
 

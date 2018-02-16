@@ -1,22 +1,18 @@
 package com.redhat.xpaas;
 
-import com.redhat.xpaas.logger.LogWrapper;
+import com.redhat.xpaas.logger.Loggable;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.ValueAtRisk.api.ValueAtRiskWebUI;
 import org.assertj.core.api.Assertions;
 import org.junit.*;
-import org.junit.rules.TestRule;
 import org.junit.runners.MethodSorters;
 
+@Loggable(project = "valueatrisk")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
 
-  private LogWrapper log = new LogWrapper(Setup.class, "valueatrisk");
   private static ValueAtRiskWebUI ValueAtRisk;
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
-
-  @Rule
-  public TestRule watcher = log.getLogTestWatcher();
 
   @BeforeClass
   public static void setUp() {

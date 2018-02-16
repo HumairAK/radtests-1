@@ -1,25 +1,20 @@
 package com.redhat.xpaas;
 
-import com.redhat.xpaas.logger.LogWrapper;
-import com.redhat.xpaas.openshift.OpenshiftUtil;
+import com.redhat.xpaas.logger.Loggable;
 import com.redhat.xpaas.rad.ophicleide.api.OphicleideWebUI;
 import com.redhat.xpaas.rad.ophicleide.api.entity.QueryResults;
 import org.assertj.core.api.Assertions;
 import org.junit.*;
-import org.junit.rules.TestRule;
 import org.junit.runners.MethodSorters;
 
+@Loggable(project ="ophicleide")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
 
-  private LogWrapper log = new LogWrapper(Setup.class, "ophicleide");
   private static OphicleideWebUI ophicleide;
   private static final String modelName = RadConfiguration.modelName();
   private static final String modelUrls = RadConfiguration.modelURL();
   private static final String queryWord = RadConfiguration.queryWord();
-
-  @Rule
-  public TestRule watcher = log.getLogTestWatcher();
 
   @BeforeClass
   public static void setUP() {
@@ -50,7 +45,6 @@ public class WebUITest {
     Boolean result = ophicleide.deleteModel(modelName);
     Assertions.assertThat(result).isTrue();
   }
-
 
 }
 

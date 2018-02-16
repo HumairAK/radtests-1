@@ -1,25 +1,19 @@
 package com.redhat.xpaas;
 
-import com.redhat.xpaas.logger.LogWrapper;
 import com.redhat.xpaas.logger.Loggable;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.S3Source.api.S3SourceWebUI;
 import org.assertj.core.api.Assertions;
 import org.junit.*;
-import org.junit.rules.TestRule;
 import org.junit.runners.MethodSorters;
 
+@Loggable(project ="S3Source")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
 
-  private LogWrapper log = new LogWrapper(Setup.class, "s3source");
   private static S3SourceWebUI S3Source;
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
 
-  @Rule
-  public TestRule watcher = log.getLogTestWatcher();
-
-  @Loggable(message="Starting setup", project ="S3Source")
   @BeforeClass
   public static void setUp() {
     Setup setup = new Setup();

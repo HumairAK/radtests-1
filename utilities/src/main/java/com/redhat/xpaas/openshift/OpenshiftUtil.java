@@ -1,7 +1,6 @@
 package com.redhat.xpaas.openshift;
 
 import com.redhat.xpaas.RadConfiguration;
-import com.redhat.xpaas.logger.Loggable;
 import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.openshift.api.model.*;
 import org.slf4j.Logger;
@@ -66,7 +65,6 @@ public class OpenshiftUtil implements AutoCloseable {
     return context;
   }
 
-  @Loggable
   public <R> R withAdminUser(Function<NamespacedOpenShiftClient, R> f) {
     if (RadConfiguration.openshiftOnline()) {
       throw new IllegalArgumentException("Openshift online does not support admin users.");

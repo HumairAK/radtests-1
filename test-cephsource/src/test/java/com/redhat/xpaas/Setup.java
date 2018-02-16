@@ -12,14 +12,14 @@ public class Setup {
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   private static CephSourceWebUI CephSource;
 
-  CephSourceWebUI initializeApplications() {
+  public CephSourceWebUI initializeApplications() {
     log.action("creating-new-namespace", this::initializeProject);
     log.action("starting-oshinko-instance", Oshinko::deploySparkFromResource);
     log.action("deploy-CephSource", () -> CephSource = deployCephSource());
     return CephSource;
   }
 
-  void cleanUp() {
+  public void cleanUp() {
     if(CephSource != null){
       log.action("shutting-down-webdrivers", () -> CephSource.webDriverCleanup());
     }
