@@ -1,13 +1,12 @@
 package com.redhat.xpaas.oshinko.deployment;
 
+import com.redhat.xpaas.logger.Loggable;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.oshinko.api.OshinkoWebUI;
 import com.redhat.xpaas.RadConfiguration;
 import com.redhat.xpaas.wait.WaitUtil;
 import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.openshift.api.model.Template;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,9 +14,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
+@Loggable(project = "oshinko")
 public class Oshinko {
-  private static final Logger log = LoggerFactory.getLogger(Oshinko.class);
-
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   private static final String APP_NAME = RadConfiguration.oshinkoAppName();
   private static final String NAMESPACE = RadConfiguration.masterNamespace();
@@ -39,10 +37,7 @@ public class Oshinko {
    * Will deploy webUI pod for Oshinko and waits till ready to handle requests.
    */
   public static OshinkoWebUI deployWebUIPod() {
-    log.info("action=loading-oshinko-resources status=START");
     createServiceAccount("edit");
-    log.info("action=loading-oshinko-resources status=FINISH");
-    log.info("action=deploying-oshinko status=START");
     loadWebUIResources();
 
     try {
@@ -51,13 +46,9 @@ public class Oshinko {
       throw new IllegalStateException("Timeout expired while waiting for Oshinko server availability.");
     }
 
-    log.info("action=oshinko-waiting-for-route-exposure status=START");
     WaitUtil.waitForRoute("oshinko-web", 10000L);
     WaitUtil.waitForRoute("oshinko-web-proxy", 10000L);
-    log.info("action=oshinko-waiting-for-route-exposure status=START");
 
-
-    log.info("action=deploying-oshinko status=FINISH");
     return OshinkoWebUI.getInstance(openshift.appDefaultHostNameBuilder("oshinko-web"));
   }
 
