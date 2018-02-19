@@ -49,7 +49,7 @@ public class WebUITest {
   }
 
   @Test
-  public void testReadParquetFileFromS3(){
+  public void testEReadParquetFileFromS3(){
     assertCodeCellRange(9, 14);
   }
 

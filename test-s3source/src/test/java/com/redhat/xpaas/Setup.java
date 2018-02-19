@@ -15,7 +15,7 @@ public class Setup {
   public S3SourceWebUI initializeApplications() {
     initializeProject();
     S3Source = deployS3Source();
-    return deployS3Source();
+    return S3Source;
   }
 
   public void cleanUp() {
