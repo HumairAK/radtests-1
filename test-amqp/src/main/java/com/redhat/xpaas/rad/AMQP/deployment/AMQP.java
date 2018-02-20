@@ -8,13 +8,15 @@ import io.fabric8.kubernetes.api.model.ReplicationController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeoutException;
+
 public class AMQP {
   private static final Logger log = LoggerFactory.getLogger(AMQP.class);
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   private static final String NAMESPACE = RadConfiguration.masterNamespace();
   private static final Long TIMEOUT = RadConfiguration.timeout();
 
-  public static AMQPWebUI deployArtemis() {
+  public static AMQPWebUI deployArtemis() throws TimeoutException, InterruptedException {
 
     String ArtemisReplicationControllerConfig = "/artemis-rc.yaml";
 

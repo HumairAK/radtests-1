@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 import static com.redhat.xpaas.rad.BlockChainAnalysis.deployment.BlockChainAnalysis.deployBlockChainAnalysis;
 import static com.redhat.xpaas.rad.BlockChainAnalysis.deployment.BlockChainAnalysisSpark.deployBlockChainAnalysisSpark;
 
-@Loggable(project ="blockchain")
+@Loggable(project="blockchain")
 public class Setup {
   private String NAMESPACE = RadConfiguration.masterNamespace();
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();

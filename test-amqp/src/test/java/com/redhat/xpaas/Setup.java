@@ -6,6 +6,8 @@ import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.oshinko.deployment.Oshinko;
 import com.redhat.xpaas.rad.AMQP.api.AMQPWebUI;
 
+import java.util.concurrent.TimeoutException;
+
 import static com.redhat.xpaas.rad.AMQP.deployment.AMQP.deployArtemis;
 
 @Loggable(project ="amq")
@@ -15,7 +17,7 @@ public class Setup {
   private OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   private static AMQPWebUI AMQP;
 
-  public AMQPWebUI initializeApplications() {
+  public AMQPWebUI initializeApplications() throws TimeoutException, InterruptedException {
     initializeProject();
     Oshinko.deploySparkFromResource();
     AMQP = deployArtemis();
