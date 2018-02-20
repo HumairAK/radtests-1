@@ -332,6 +332,7 @@
                 <module>test-cephsource</module>
                 <module>test-s3source</module>
                 <module>test-blockchainanalysis</module>
+                <module>test-apachezeppelin</module>
             </modules>
         </profile>
 
@@ -395,6 +396,13 @@
             <id>test-blockchainanalysis</id>
             <modules>
                 <module>test-blockchainanalysis</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>test-apachezeppelin</id>
+            <modules>
+                <module>test-apachezeppelin</module>
             </modules>
         </profile>
     </profiles>
