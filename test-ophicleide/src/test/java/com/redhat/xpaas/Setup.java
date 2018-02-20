@@ -7,6 +7,8 @@ import com.redhat.xpaas.rad.ophicleide.api.OphicleideWebUI;
 import com.redhat.xpaas.oshinko.deployment.Oshinko;
 import com.redhat.xpaas.rad.ophicleide.deployment.Ophicleide;
 
+import java.util.concurrent.TimeoutException;
+
 @Loggable(project ="ophicleide")
 public class Setup {
 
@@ -14,7 +16,7 @@ public class Setup {
   private OpenshiftUtil openshift = OpenshiftUtil.getInstance();
   private static OphicleideWebUI ophicleide;
 
-  public OphicleideWebUI initializeApplications() {
+  public OphicleideWebUI initializeApplications() throws TimeoutException, InterruptedException {
     initializeProject();
     Oshinko.deploySparkFromResource();
     MongoDB.deployMongoDBPod();

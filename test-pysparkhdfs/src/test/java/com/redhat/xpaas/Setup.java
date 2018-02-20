@@ -4,6 +4,9 @@ import com.redhat.xpaas.logger.Loggable;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.oshinko.deployment.Oshinko;
 import com.redhat.xpaas.rad.PySparkHDFS.api.PySparkHDFSWebUI;
+
+import java.util.concurrent.TimeoutException;
+
 import static com.redhat.xpaas.rad.PySparkHDFS.deployment.PySparkHDFS.deployPySparkHDFS;
 
 @Loggable(project ="pysparkhdfs")
@@ -12,7 +15,7 @@ public class Setup {
   private String NAMESPACE = RadConfiguration.masterNamespace();
   private static PySparkHDFSWebUI pySparkHDFS;
 
-  public PySparkHDFSWebUI initializeApplications() {
+  public PySparkHDFSWebUI initializeApplications() throws TimeoutException, InterruptedException {
     initializeProject();
     Oshinko.deploySparkFromResource();
     pySparkHDFS = deployPySparkHDFS();

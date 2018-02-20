@@ -1,6 +1,7 @@
 package com.redhat.xpaas;
 
 import com.redhat.xpaas.logger.Loggable;
+import com.redhat.xpaas.logger.LoggerUtil;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.oshinko.deployment.Oshinko;
 import com.redhat.xpaas.rad.apachekafka.deployment.ApacheKafka;
@@ -22,25 +23,27 @@ public class Setup {
 
   // Returns an array of size 2 where at index 0 contains Jgrafzahl web UI and index 2
   // contains Grafzahl's web ui api.
-  public JgrafZahlWebUI[] initializeApplications() {
+  public JgrafZahlWebUI[] initializeApplications() throws TimeoutException, InterruptedException {
+
     initializeProject();
+
     Oshinko.createServiceAccount("edit");
     Oshinko.loadJavaSparkResources();
+
     ApacheKafka.deployApacheKafka();
     WordFountain.deployWordFountain();
 
+    // The following will also deploy the spark master/workers
     JgrafZahl = deployJgrafZahl();
     GrafZahl = deployGrafZahl();
 
-    WaitUtil.waitForActiveBuildsToComplete();
-    try {
-      WaitUtil.waitFor(WaitUtil.isAPodReady("word-fountain"));
-      WaitUtil.waitFor(WaitUtil.isAPodReady("jgrafzahl"));
-      WaitUtil.waitFor(WaitUtil.isAPodReady("grafzahl"));
-      WaitUtil.waitFor(WaitUtil.areNWorkerReady(2));
-      WaitUtil.waitFor(WaitUtil.areNMastersReady(2));
-    } catch (InterruptedException | TimeoutException e) {
-      e.printStackTrace();
+    // In order to account for all worker/masters for both grafzahls we wait for their deployments here
+    if(!WaitUtil.waitFor(WaitUtil.areNWorkerReady(2))){
+      throw new IllegalStateException(LoggerUtil.openshiftError("spark-worker deployment", "pod"));
+    }
+
+    if(!WaitUtil.waitFor(WaitUtil.areNMastersReady(2))){
+      throw new IllegalStateException(LoggerUtil.openshiftError("spark-master deployment", "pod"));
     }
 
     return new JgrafZahlWebUI[]{JgrafZahl, GrafZahl};

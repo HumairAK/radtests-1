@@ -182,8 +182,8 @@ public class OpenshiftUtil implements AutoCloseable {
             break;
           }
           Thread.sleep(10000L);
-        } catch (InterruptedException | RuntimeException e1) {
-          e1.printStackTrace();
+        } catch (InterruptedException e1) {
+          LOGGER.warn("Interrupted while attempting to create namespace.");
         }
       }
     }
@@ -192,7 +192,6 @@ public class OpenshiftUtil implements AutoCloseable {
       LOGGER.error("Unable to create project after max attempts");
       throw new RuntimeException("Unable to create project after max attempts");
     }
-
 
     addRoleToUser(name, "admin", RadConfiguration.masterUsername());
 
@@ -219,6 +218,15 @@ public class OpenshiftUtil implements AutoCloseable {
       .list().getItems());
   }
 
+  public Optional<Pod> getPod(String labelKey, String labelValue){
+    return withAdminUser(client -> client.inNamespace(NAMESPACE).pods()
+      .list().getItems().stream().filter(p -> {
+        Map<String, String> labels = p.getMetadata().getLabels();
+        return labels.containsKey(labelKey) && labels.get(labelKey).equals(labelValue);
+      }).findFirst()
+    );
+  }
+
   public List<Pod> findPods(Map<String, String> labels) {
     return findPods(labels, NAMESPACE);
   }
@@ -233,13 +241,24 @@ public class OpenshiftUtil implements AutoCloseable {
   }
 
   public boolean podRunning(String labelKey, String labelValue){
-    Optional<Pod> pod = withAdminUser(client -> client.inNamespace(NAMESPACE).pods()
-      .list().getItems().stream().filter(p -> {
-        Map<String, String> labels = p.getMetadata().getLabels();
-        return labels.containsKey(labelKey) && labels.get(labelKey).equals(labelValue);
-      }).findFirst()
-    );
-    return pod.map(p -> p.getStatus().getPhase().equals("Running")).orElse(false);
+    return podInPhase(labelKey, labelValue, "Running");
+  }
+
+  public boolean podIsHealthy(String labelKey, String labelValue){
+    Optional<Pod> pod = getPod(labelKey, labelValue);
+    List<PodCondition> conditions;
+
+    if(pod.isPresent()){
+      conditions = pod.get().getStatus().getConditions();
+    } else {
+      throw new IllegalStateException(String.format("Pod with label [%s:%s] does not exist", labelKey, labelValue));
+    }
+    return conditions.stream().filter(c -> !c.getStatus().equals("True")).count() == 0;
+  }
+
+  public boolean podInPhase(String labelKey, String labelValue, String phase){
+    Optional<Pod> pod = getPod(labelKey, labelValue);
+    return pod.map(p -> p.getStatus().getPhase().equals(phase)).orElse(false);
   }
 
   // builds

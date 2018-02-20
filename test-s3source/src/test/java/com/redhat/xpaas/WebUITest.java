@@ -7,6 +7,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
+import java.util.concurrent.TimeoutException;
+
 @Loggable(project ="S3Source")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
@@ -15,7 +17,7 @@ public class WebUITest {
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
 
   @BeforeClass
-  public static void setUp() {
+  public static void setUp() throws TimeoutException, InterruptedException {
     Setup setup = new Setup();
     WebUITest.S3Source = setup.initializeApplications();
     S3Source.login("developer");

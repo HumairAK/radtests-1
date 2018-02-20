@@ -26,7 +26,6 @@ public final class MethodLogger {
 
   @Around
     (
-      // @checkstyle StringLiteralsConcatenation (7 lines)
       "execution(public * (@com.redhat.xpaas.logger.Loggable *).*(..))"
         + " && !execution(String *.toString())"
         + " && !execution(int *.hashCode())"
@@ -75,12 +74,15 @@ public final class MethodLogger {
       log.finish(message, System.currentTimeMillis() - start);
     } catch(Throwable throwable) {
       String e = throwable.getMessage();
-      log.error(message, "\"" + e.substring(0, Math.min(e.length(), 100)) + "...\"");
+      if (method.getName().startsWith("test")){
+        log.failed(message, "\"" + e.substring(0, Math.min(e.length(), 100)) + "...\"", System.currentTimeMillis() - start);
+      } else {
+        log.error(message, "\"" + e.substring(0, Math.min(e.length(), 100)) + "...\"");
+      }
       throw throwable;
     }
 
     return result;
   }
-
 
 }

@@ -6,6 +6,8 @@ import com.redhat.xpaas.rad.BlockChainAnalysis.api.BlockChainAnalysisSparkWebUI;
 import com.redhat.xpaas.rad.BlockChainAnalysis.api.BlockChainAnalysisWebUI;
 import com.redhat.xpaas.util.Tuple;
 
+import java.util.concurrent.TimeoutException;
+
 import static com.redhat.xpaas.rad.BlockChainAnalysis.deployment.BlockChainAnalysis.deployBlockChainAnalysis;
 import static com.redhat.xpaas.rad.BlockChainAnalysis.deployment.BlockChainAnalysisSpark.deployBlockChainAnalysisSpark;
 
@@ -16,7 +18,7 @@ public class Setup {
   private static BlockChainAnalysisWebUI BlockChainAnalysis;
   private static BlockChainAnalysisSparkWebUI BlockChainAnalysisSpark;
 
-  public Tuple<BlockChainAnalysisWebUI, BlockChainAnalysisSparkWebUI> initializeApplications() {
+  public Tuple<BlockChainAnalysisWebUI, BlockChainAnalysisSparkWebUI> initializeApplications() throws TimeoutException, InterruptedException {
     initializeProject();
     BlockChainAnalysis = deployBlockChainAnalysis();
     BlockChainAnalysisSpark = deployBlockChainAnalysisSpark();

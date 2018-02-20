@@ -4,6 +4,8 @@ import com.redhat.xpaas.logger.Loggable;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.rad.MNIST.api.MNISTWebUI;
 
+import java.util.concurrent.TimeoutException;
+
 import static com.redhat.xpaas.rad.MNIST.deployment.MNIST.deployMNIST;
 
 @Loggable(project = "mnist")
@@ -12,7 +14,7 @@ public class Setup {
   private String NAMESPACE = RadConfiguration.masterNamespace();
   private static MNISTWebUI MNIST;
 
-  public MNISTWebUI initializeApplications() {
+  public MNISTWebUI initializeApplications() throws TimeoutException, InterruptedException {
     initializeProject();
     MNIST = deployMNIST();
     return MNIST;

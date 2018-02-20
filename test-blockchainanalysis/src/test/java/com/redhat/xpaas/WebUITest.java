@@ -9,6 +9,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
+import java.util.concurrent.TimeoutException;
+
 @Loggable(project ="blockchain")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
@@ -18,7 +20,7 @@ public class WebUITest {
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
 
   @BeforeClass
-  public static void setUP() {
+  public static void setUP() throws TimeoutException, InterruptedException {
     Setup setup = new Setup();
     Tuple<BlockChainAnalysisWebUI, BlockChainAnalysisSparkWebUI> blockchainNoteBooks = setup.initializeApplications();
     BlockChainAnalysis = blockchainNoteBooks.getFirst();

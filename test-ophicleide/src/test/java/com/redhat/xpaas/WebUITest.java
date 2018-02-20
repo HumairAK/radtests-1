@@ -7,7 +7,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
-@Loggable(project ="ophicleide")
+import java.util.concurrent.TimeoutException;
+
+@Loggable(project = "ophicleide")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
 
@@ -17,7 +19,7 @@ public class WebUITest {
   private static final String queryWord = RadConfiguration.queryWord();
 
   @BeforeClass
-  public static void setUP() {
+  public static void setUP() throws TimeoutException, InterruptedException {
     Setup setup = new Setup();
     WebUITest.ophicleide = setup.initializeApplications();
   }

@@ -7,7 +7,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
-@Loggable(project ="pysparkhdfs")
+import java.util.concurrent.TimeoutException;
+
+@Loggable(project="pysparkhdfs")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WebUITest {
 
@@ -19,7 +21,7 @@ public class WebUITest {
   private static final String HDFS_PATH = RadConfiguration.HadoopPath();
 
   @BeforeClass
-  public static void setUP() {
+  public static void setUP() throws TimeoutException, InterruptedException {
     Setup setup = new Setup();
     WebUITest.PySparkHDFS = setup.initializeApplications();
     PySparkHDFS.login("developer");

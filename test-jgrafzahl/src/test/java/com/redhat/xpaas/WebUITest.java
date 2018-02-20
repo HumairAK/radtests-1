@@ -9,6 +9,7 @@ import org.junit.runners.MethodSorters;
 
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeoutException;
 
 @Loggable(project ="grafzahl")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -19,7 +20,7 @@ public class WebUITest {
   private static final OpenshiftUtil openshift = OpenshiftUtil.getInstance();
 
   @BeforeClass
-  public static void setUP() {
+  public static void setUP() throws TimeoutException, InterruptedException {
     Setup setup = new Setup();
     JgrafZahlWebUI[] grafzahls = setup.initializeApplications();
 
@@ -29,7 +30,6 @@ public class WebUITest {
     if(!jgrafZahl.loadPage() || !grafZahl.loadPage()){
       throw new RuntimeException("Failed to load Webui for jgrafZahl/grafZahl.");
     }
-
   }
 
   @AfterClass

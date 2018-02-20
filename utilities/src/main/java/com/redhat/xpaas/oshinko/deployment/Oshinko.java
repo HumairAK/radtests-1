@@ -1,6 +1,7 @@
 package com.redhat.xpaas.oshinko.deployment;
 
 import com.redhat.xpaas.logger.Loggable;
+import com.redhat.xpaas.logger.LoggerUtil;
 import com.redhat.xpaas.openshift.OpenshiftUtil;
 import com.redhat.xpaas.oshinko.api.OshinkoWebUI;
 import com.redhat.xpaas.RadConfiguration;
@@ -36,7 +37,7 @@ public class Oshinko {
   /**
    * Will deploy webUI pod for Oshinko and waits till ready to handle requests.
    */
-  public static OshinkoWebUI deployWebUIPod() {
+  public static OshinkoWebUI deployWebUIPod() throws TimeoutException, InterruptedException {
     createServiceAccount("edit");
     loadWebUIResources();
 
@@ -52,7 +53,7 @@ public class Oshinko {
     return OshinkoWebUI.getInstance(openshift.appDefaultHostNameBuilder("oshinko-web"));
   }
 
-  public static void deploySparkFromResource(){
+  public static void deploySparkFromResource() throws TimeoutException, InterruptedException {
     String sparkResource = "/oshinko/spark-metrics-template.yaml";
 
     Template template = openshift.withAdminUser(client ->
@@ -65,8 +66,15 @@ public class Oshinko {
 
     openshift.loadTemplate(template, parameters);
 
-    WaitUtil.waitForPodsToReachRunningState("name", "spark-m", 1);
-    WaitUtil.waitForPodsToReachRunningState("name", "spark-w", 2);
+    boolean succeeded = WaitUtil.waitForPodsToReachRunningState("name", "spark-m", 1);
+    if(!succeeded){
+      throw new IllegalStateException(LoggerUtil.openshiftError("spark-m deployment", "pod"));
+    }
+
+    succeeded = WaitUtil.waitForPodsToReachRunningState("name", "spark-w", 2);
+    if(!succeeded){
+      throw new IllegalStateException(LoggerUtil.openshiftError("spark-w deployment", "pod"));
+    }
   }
 
   public static void buildRoute(){
@@ -160,15 +168,11 @@ public class Oshinko {
     openshift.loadTemplate(PySpark, parameters);
   }
 
-  public static void waitForClustersSetup(){
+  public static void waitForClustersSetup() throws TimeoutException, InterruptedException {
     String masterName = CLUSTER_NAME + "-m";
     String workerName = CLUSTER_NAME + "-w";
-    try {
-      WaitUtil.waitFor(_areNClusterPodsReady(masterName, 1));
-      WaitUtil.waitFor(_areNClusterPodsReady(workerName, WORKERS_COUNT));
-    } catch (InterruptedException | TimeoutException e) {
-      throw new IllegalStateException("Timeout expired while waiting for cluster/mongoDB pods or  availability");
-    }
+    WaitUtil.waitFor(_areNClusterPodsReady(masterName, 1));
+    WaitUtil.waitFor(_areNClusterPodsReady(workerName, WORKERS_COUNT));
   }
 
   private static BooleanSupplier _areNClusterPodsReady(String name, int n){
